@@ -87,7 +87,8 @@ class Home extends Component {
 
   renderQRCode = () => {
     const { showQR, playerName } = this.state;
-    const appUrl = window.location.href; // This will be the URL for your React app
+    //const appUrl = window.location.href; // This will be the URL for your React app
+    const appUrl = "https://kbcgamepg.netlify.app/";
 
     return (
       <div className="qr-code">
