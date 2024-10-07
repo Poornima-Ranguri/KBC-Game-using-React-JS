@@ -126,7 +126,11 @@ class Home extends Component {
         closeOnClick: true,
         transition: Slide,
         onClose: () => {
-          this.setState({ showHomePageOfGame: false, gameCompleted: false });
+          this.setState({
+            showHomePageOfGame: false,
+            gameCompleted: false,
+            activeQuestionIndex: 0,
+          });
         },
       }
     );
