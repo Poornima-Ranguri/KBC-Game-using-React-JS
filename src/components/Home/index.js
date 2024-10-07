@@ -88,7 +88,7 @@ class Home extends Component {
   renderQRCode = () => {
     const { showQR, playerName } = this.state;
     //const appUrl = window.location.href; // This will be the URL for your React app
-    const appUrl = "https://kbcgamepg.netlify.app/";
+    const appUrl = "https://kbcgamepg.netlify.app/Mobile";
 
     return (
       <div className="qr-code">
@@ -100,7 +100,7 @@ class Home extends Component {
         ) : (
           <MobileHome onJoin={this.handleJoin} />
         )}
-        {playerName && <h2>Player Joined: {playerName}</h2>}
+        {playerName && <h2 className="Joined">Player Joined: {playerName}</h2>}
       </div>
     );
   };
@@ -130,6 +130,7 @@ class Home extends Component {
             showHomePageOfGame: false,
             gameCompleted: false,
             activeQuestionIndex: 0,
+            playerName: "",
           });
         },
       }
@@ -162,7 +163,7 @@ class Home extends Component {
             />
           </ul>
         </div>
-        <div>{this.renderQRCode()}</div>
+        {this.renderQRCode()}
       </div>
     );
   };
@@ -174,7 +175,7 @@ class Home extends Component {
   onClickProceed = () => {
     const { playerName } = this.state;
     if (playerName !== "") {
-      this.setState({ showHomePageOfGame: true, playerName: "" });
+      this.setState({ showHomePageOfGame: true });
     }
   };
 
