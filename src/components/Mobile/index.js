@@ -1,8 +1,5 @@
 import { Component } from "react";
 import { v4 as uuidv4 } from "uuid";
-import { QRCodeSVG } from "qrcode.react";
-import MobileHome from "../Mobile";
-
 import QuestionItem from "../QuestionItem";
 import { ToastContainer, toast, Slide } from "react-toastify";
 
@@ -72,36 +69,12 @@ const questionsList = [
   },
 ];
 
-class Home extends Component {
+class MobileHome extends Component {
   state = {
     playerName: "",
     showHomePageOfGame: false,
     activeQuestionIndex: 0,
     gameCompleted: false,
-    showQR: true,
-  };
-
-  handleJoin = () => {
-    this.setState({ showQR: false });
-  };
-
-  renderQRCode = () => {
-    const { showQR, playerName } = this.state;
-    const appUrl = window.location.href; // This will be the URL for your React app
-
-    return (
-      <div className="qr-code">
-        {showQR ? (
-          <div>
-            <p>Scan the QR code below to join the game:</p>
-            <QRCodeSVG value={appUrl} size={150} />
-          </div>
-        ) : (
-          <MobileHome onJoin={this.handleJoin} />
-        )}
-        {playerName && <h2>Player Joined: {playerName}</h2>}
-      </div>
-    );
   };
 
   onUpdatePlayer = () => {
@@ -143,21 +116,17 @@ class Home extends Component {
   renderGame = () => {
     const { activeQuestionIndex } = this.state;
     const activeQuestion = questionsList[activeQuestionIndex];
-    //const appUrl = window.location.href; // This will be the URL for your React app
 
     return (
-      <div className="qr-code-container">
-        <div className="home-card">
-          <h1 className="heading">WELCOME TO KBC GAME</h1>
-          <ul className="questions-list-container">
-            <QuestionItem
-              key={activeQuestion.id}
-              questionDetails={activeQuestion}
-              onUpdatePlayer={this.onUpdatePlayer}
-            />
-          </ul>
-        </div>
-        <div>{this.renderQRCode()}</div>
+      <div className="home-card">
+        <h1 className="heading">WELCOME TO KBC GAME</h1>
+        <ul className="questions-list-container">
+          <QuestionItem
+            key={activeQuestion.id}
+            questionDetails={activeQuestion}
+            onUpdatePlayer={this.onUpdatePlayer}
+          />
+        </ul>
       </div>
     );
   };
@@ -173,6 +142,7 @@ class Home extends Component {
     }
   };
 
+  
   renderPlayerName = () => {
     const { playerName } = this.state;
     return (
@@ -209,4 +179,4 @@ class Home extends Component {
   }
 }
 
-export default Home;
+export default MobileHome;
