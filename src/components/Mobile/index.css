@@ -127,8 +127,9 @@
   }
 
   .questions-list-container {
-    /*box-shadow: 0px 4px 16px 0px #bfbfbf;*/
+    box-shadow: 0px 4px 16px 0px #bfbfbf;
     list-style-type: none;
+    border-radius: 15px;
   }
 
   .qr-code {

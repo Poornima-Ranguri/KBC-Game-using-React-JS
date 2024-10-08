@@ -134,5 +134,11 @@
 }
 
 .Joined {
-  color: darkgray;
+  color: darksalmon;
+  font-weight: bold;
+}
+
+.playername {
+  color: darkolivegreen;
+  font-weight: 500;
 }

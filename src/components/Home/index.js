@@ -100,7 +100,12 @@ class Home extends Component {
         ) : (
           <MobileHome onJoin={this.handleJoin} />
         )}
-        {playerName && <h2 className="Joined">Player Joined: {playerName}</h2>}
+        {playerName && (
+          <h2 className="Joined">
+            Player Joined:{" "}
+            <span className="playername">{playerName.toUpperCase()}</span>
+          </h2>
+        )}
       </div>
     );
   };
@@ -119,12 +124,16 @@ class Home extends Component {
   showCompletionToast = () => {
     const { playerName } = this.state;
     toast.success(
-      `🎉 Congratulations ${playerName}! You've completed all the questions!`,
+      `🎉 Congratulations ${playerName.toUpperCase()}! You've completed all the questions!`,
       {
         position: "top-center",
         autoClose: 6000,
         closeOnClick: true,
         transition: Slide,
+        draggable: true,
+        style: {
+          textAlign: "center",
+        },
         onClose: () => {
           this.setState({
             showHomePageOfGame: false,

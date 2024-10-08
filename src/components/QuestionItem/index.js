@@ -7,6 +7,7 @@ const QuestionItem = (props) => {
 
   const [selectedOption, setSelectedOption] = useState(null);
   const [feedback, setFeedback] = useState("");
+  const [feedbackClassName, setFeedbackClassName] = useState("");
 
   const onChangeOption = (optionId) => {
     setSelectedOption(optionId);
@@ -19,6 +20,10 @@ const QuestionItem = (props) => {
       setFeedback(isCorrect ? "Correct Answer!" : "Wrong Answer!");
 
       // Call onUpdatePlayer after 1 second delay to proceed to next question
+
+      setFeedbackClassName(
+        isCorrect ? "wrong-feedback-text" : "correct-feedback-text"
+      );
 
       console.log(isCorrect);
 
@@ -53,7 +58,7 @@ const QuestionItem = (props) => {
       <button type="button" onClick={onClickSubmit} className="submit-button">
         Submit
       </button>
-      {feedback && <p className="feedback-text">{feedback}</p>}
+      {feedback && <p className={feedbackClassName}>{feedback}</p>}
     </li>
   );
 };
