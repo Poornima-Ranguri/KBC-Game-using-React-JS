@@ -110,10 +110,45 @@ class Home extends Component {
     );
   };
 
+  onUpdateQuestion = async () => {
+    const { playerName, activeQuestionIndex } = this.state;
+
+    // Update the backend to track the player's progress
+    const url = "https://backend-for-kbc-game.onrender.com/update-status";
+
+    // Check if the player has completed all questions
+    const completedQuestionStatus =
+      activeQuestionIndex + 1 === questionsList.length ? true : false;
+
+    const player = {
+      username: playerName,
+      questions_attempted: activeQuestionIndex + 1, // Increment by 1
+      completedAllQuestions: completedQuestionStatus, // Pass as boolean
+    };
+
+    const options = {
+      method: "PUT",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify(player),
+    };
+
+    try {
+      const response = await fetch(url, options);
+      const result = await response.json();
+      console.log("Question update response: ", result);
+    } catch (error) {
+      console.error("Error updating question progress: ", error);
+    }
+  };
+
   onUpdatePlayer = () => {
     this.setState((prevState) => {
       const nextIndex = prevState.activeQuestionIndex + 1;
       if (nextIndex < questionsList.length) {
+        this.onUpdateQuestion();
+
         return { activeQuestionIndex: nextIndex };
       } else if (!prevState.gameCompleted) {
         this.showCompletionToast();
@@ -181,10 +216,78 @@ class Home extends Component {
     this.setState({ playerName: event.target.value });
   };
 
-  onClickProceed = () => {
+  /* onClickProceed = async () => {
     const { playerName } = this.state;
     if (playerName !== "") {
+      const url = "http://localhost:3003/add-user";
+
+      const player = {
+        username: playerName,
+        questions_attempted: 1,
+        completedAllQuestions: "FALSE",
+      };
+
+      //console.log(player);
+      const options = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(player),
+      };
+
+      try {
+        const response = await fetch(url, options);
+        console.log(response);
+      } catch (error) {
+        console.log(error);
+      }
+
       this.setState({ showHomePageOfGame: true });
+    }
+  };
+  */
+
+  onClickProceed = async () => {
+    const { playerName } = this.state;
+    if (playerName.trim() === "") {
+      toast.error("Username cannot be empty!", {
+        position: "top-center",
+        autoClose: 6000,
+        closeOnClick: true,
+        draggable: true,
+      });
+      return; // Exit early if the username is empty
+    }
+
+    const url = "https://backend-for-kbc-game.onrender.com/add-user";
+    const player = { username: playerName };
+
+    const options = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(player),
+    };
+
+    try {
+      const response = await fetch(url, options);
+      if (!response.ok) {
+        const errorMessage = await response.text(); // Retrieve error message
+        throw new Error(errorMessage);
+      }
+      const result = await response.text();
+      console.log(result);
+      this.setState({ showHomePageOfGame: true });
+    } catch (error) {
+      toast.error(error.message, {
+        position: "top-center",
+        autoClose: 6000,
+        closeOnClick: true,
+        draggable: true,
+      });
+      console.log("Error:", error);
     }
   };
 

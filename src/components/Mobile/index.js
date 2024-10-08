@@ -77,7 +77,7 @@ class MobileHome extends Component {
     gameCompleted: false,
   };
 
-  onUpdatePlayer = () => {
+  /*onUpdatePlayer = () => {
     this.setState((prevState) => {
       const nextIndex = prevState.activeQuestionIndex + 1;
       if (nextIndex < questionsList.length) {
@@ -86,6 +86,51 @@ class MobileHome extends Component {
         this.showCompletionToast();
       }
     });
+  };
+  */
+
+  onUpdatePlayer = () => {
+    this.setState((prevState) => {
+      const nextIndex = prevState.activeQuestionIndex + 1;
+      if (nextIndex < questionsList.length) {
+        return { activeQuestionIndex: nextIndex };
+      } else if (!prevState.gameCompleted) {
+        // User has completed all questions
+        this.showCompletionToast();
+        // Resetting the activeQuestionIndex to 0 and updating the backend
+        this.updateUserStatus(prevState.playerName, 0, true); // Call to update status
+        return { activeQuestionIndex: 0, gameCompleted: true };
+      }
+    });
+  };
+
+  // New method to update user status in the backend
+  updateUserStatus = async (
+    username,
+    questionsAttempted,
+    completedAllQuestions
+  ) => {
+    try {
+      const response = await fetch(
+        "https://backend-for-kbc-game.onrender.com/update-status",
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            username,
+            questions_attempted: questionsAttempted,
+            completedAllQuestions,
+          }),
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Failed to update user status");
+      }
+    } catch (error) {
+      console.error("Error updating user status:", error);
+    }
   };
 
   showCompletionToast = () => {
@@ -98,7 +143,11 @@ class MobileHome extends Component {
         closeOnClick: true,
         transition: Slide,
         onClose: () => {
-          this.setState({ showHomePageOfGame: false, gameCompleted: false });
+          this.setState({
+            showHomePageOfGame: false,
+            gameCompleted: false,
+            playerName: "",
+          });
         },
       }
     );
@@ -135,14 +184,49 @@ class MobileHome extends Component {
     this.setState({ playerName: event.target.value });
   };
 
-  onClickProceed = () => {
+  onClickProceed = async () => {
     const { playerName } = this.state;
+
     if (playerName !== "") {
-      this.setState({ showHomePageOfGame: true, playerName: "" });
+      const url = `https://backend-for-kbc-game.onrender.com/user/${playerName}`;
+      try {
+        const response = await fetch(url);
+
+        if (response.ok) {
+          const user = await response.json();
+          // Resume from the user's current question
+          this.setState({
+            showHomePageOfGame: true,
+            activeQuestionIndex: user.questions_attempted,
+            playerName: user.username,
+          });
+        } else {
+          // Create a new user if none exists
+          this.setState({
+            showHomePageOfGame: true,
+            playerName: playerName,
+            activeQuestionIndex: 0,
+          });
+
+          // Create a new user in the backend
+          await fetch("https://backend-for-kbc-game.onrender.com/add-user", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              username: playerName,
+              questions_attempted: 0,
+              completedAllQuestions: "FALSE",
+            }),
+          });
+        }
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
 
-  
   renderPlayerName = () => {
     const { playerName } = this.state;
     return (
